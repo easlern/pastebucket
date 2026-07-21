@@ -1,0 +1,14 @@
+# Test your Pastebucket endpoints
+
+GET http://127.0.0.1:8000/
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/pastebucket/shiny-fox-123
+Accept: text/html
+
+###
+
+# WebSocket tests require a WebSocket client, but you can try the URL:
+# ws://127.0.0.1:8000/ws/shiny-fox-123

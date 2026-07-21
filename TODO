@@ -1,0 +1,10 @@
+# Pastebucket TODO
+
+- [x] Define word lists (adjectives, nouns) and session ID generator.
+- [x] Implement `ConnectionManager` for WebSocket broadcasting.
+- [x] Create in-memory store for session text content.
+- [x] Implement `GET /` to redirect to a new random session.
+- [x] Implement `GET /pastebucket/{session_id}` to serve the frontend.
+- [x] Implement `WS /ws/{session_id}` for real-time synchronization.
+- [x] Create HTML/JS frontend with real-time sync and debouncing.
+- [x] Add basic CSS for a full-screen, clean UI.
