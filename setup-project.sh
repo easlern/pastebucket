@@ -49,8 +49,7 @@ if [ ! -d ".venv" ]; then
 fi
 
 echo "📥 Installing dependencies..."
-source .venv/bin/activate
-pip install -r requirements.txt
+.venv/bin/pip install -r requirements.txt
 
 # 3. Create/Update Systemd Service
 echo "⚙️ Configuring systemd service..."
