@@ -50,9 +50,9 @@ uvicorn main:app --port 3000 --reload
 Once the server is running, open your browser and navigate to:
 [http://127.0.0.1:3000](http://127.0.0.1:3000)
 
-## The "Weirdo Project" Shared Host Workflow (Pull-Based)
+## The "Weirdo Project" Shared Host Workflow (One-Command Setup)
 
-This setup allows you to host multiple projects on a single VPS without opening SSH (Port 22) to the world. Instead of GitHub "pushing" to your server, your server "pulls" from GitHub using a Webhook or a Cron job.
+This setup allows you to host multiple projects on a single VPS without opening SSH (Port 22) to the world. You manage projects manually via a single script that handles Nginx, Systemd, and SSL.
 
 ### 1. One-Time Server Setup
 Run these once on your server:
@@ -63,36 +63,29 @@ sudo apt update && sudo apt install nginx python3-venv certbot python3-certbot-n
 # Setup Firewall (Only Web ports need to be open)
 sudo ufw allow 'Nginx Full' # Ports 80 & 443
 sudo ufw --force enable
-
-# Optional: Close SSH to everyone but you
-# sudo ufw allow from YOUR_IP_ADDRESS to any port 22
 ```
 
 ### 2. Adding a New Project
+Follow these steps for every new "weirdo project" (like this one):
 
-#### A. DNS & Nginx
-1.  **DNS**: Create a **CNAME** for your subdomain.
-2.  **Nginx**: Use `nginx.conf.template` to create `/etc/nginx/sites-available/pastebucket`.
-3.  **SSL**: Run `sudo certbot --nginx -d pastebucket.nicholaseasler.com`.
+1.  **DNS**: Create a **CNAME** for your subdomain (e.g., `pastebucket.nicholaseasler.com`).
+2.  **Clone**: On your server, clone the repository:
+    ```bash
+    git clone <your-repo-url> ~/pastebucket
+    ```
+3.  **Setup**: Run the setup script from the project folder:
+    ```bash
+    cd ~/pastebucket
+    sudo ./setup-project.sh pastebucket .
+    ```
 
-#### B. Systemd Service
-1.  Copy `pastebucket.service` to `/etc/systemd/system/`.
-2.  Update paths and set a unique `Environment=PORT=3000`.
-3.  Start it: `sudo systemctl enable --now pastebucket`.
+### How the script works:
+- **Auto-Port**: It automatically finds an available port (starting at 3000) so projects don't clash.
+- **Nginx & SSL**: It generates the Nginx config and runs Certbot for HTTPS.
+- **Systemd**: It creates a background service so your app stays running.
+- **Updates**: To update the project, just `git pull` and run the script again.
 
-#### C. Auto-Deploy (The "Pull" Method)
-Instead of GitHub Actions, we use a simple Cron job or a Webhook listener on the server to pull changes.
-
-**Option 1: The Simple Cron (Recommended for "Weirdo Projects")**
-Run `crontab -e` and add this line to check for updates every 5 minutes:
-```bash
-*/5 * * * * cd ~/pastebucket && git pull origin main && sudo systemctl restart pastebucket
-```
-
-**Option 2: The Webhook**
-If you want instant deploys, you can use a minimalist webhook listener (like `adnanh/webhook`) that triggers the `deploy.sh` script whenever GitHub sends a POST request.
-
-> **Tip**: When starting a new project, just copy this repo, change the service/directory names in the files, and you're live in minutes.
+> **Tip**: You can copy `setup-project.sh` to your home directory (`~/`) to use it as a master tool for all your one-off projects.
 
 ## Tech Stack
 
