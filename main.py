@@ -1,4 +1,6 @@
+import os
 import random
+import uvicorn
 from typing import Dict, List
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -175,3 +177,8 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
             await manager.broadcast(data, session_id, exclude=websocket)
     except WebSocketDisconnect:
         manager.disconnect(websocket, session_id)
+
+if __name__ == "__main__":
+    # Railway and other PaaS use the PORT environment variable
+    port = int(os.environ.get("PORT", 3000))
+    uvicorn.run(app, host="0.0.0.0", port=port)

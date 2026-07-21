@@ -35,14 +35,20 @@ Pastebucket uses **FastAPI** on the backend and **WebSockets** for real-time com
 
 ### Running the Application
 
-Start the server using `uvicorn`:
+Start the server using `uvicorn` (defaults to port 3000):
 
 ```bash
-uvicorn main:app --reload
+python main.py
+```
+
+Alternatively, you can still use `uvicorn` directly:
+
+```bash
+uvicorn main:app --port 3000 --reload
 ```
 
 Once the server is running, open your browser and navigate to:
-[http://127.0.0.1:8000](http://127.0.0.1:8000)
+[http://127.0.0.1:3000](http://127.0.0.1:3000)
 
 ## Tech Stack
 
