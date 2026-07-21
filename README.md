@@ -50,6 +50,28 @@ uvicorn main:app --port 3000 --reload
 Once the server is running, open your browser and navigate to:
 [http://127.0.0.1:3000](http://127.0.0.1:3000)
 
+## Deployment (DIY VPS)
+
+For a minimalist, reliable setup on any Linux VPS (DigitalOcean, Hetzner, etc.):
+
+### 1. Server Setup
+1. Clone the repo to your server: `git clone <your-repo-url> ~/pastebucket`
+2. Create a virtual environment: `python3 -m venv ~/pastebucket/.venv`
+3. Install the systemd service:
+   - Edit `pastebucket.service` and replace `youruser` with your actual username.
+   - Copy it: `sudo cp pastebucket.service /etc/systemd/system/`
+   - Start it: `sudo systemctl enable --now pastebucket`
+
+### 2. GitHub Actions (Auto-Deploy)
+Add these **Secrets** to your GitHub repository (`Settings > Secrets and variables > Actions`):
+- `SERVER_IP`: Your server's IP address.
+- `SERVER_USER`: Your SSH username (e.g., `root` or `ubuntu`).
+- `SSH_PRIVATE_KEY`: Your private SSH key (ensure the public key is in `~/.ssh/authorized_keys` on the server).
+
+> **Note**: Your server user needs permission to run `sudo systemctl restart pastebucket` without a password, or you can remove `sudo` if running as root.
+
+Now, every time you `git push`, GitHub will automatically update the code on your server and restart the service.
+
 ## Tech Stack
 
 - **Backend**: FastAPI (Python)

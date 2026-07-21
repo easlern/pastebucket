@@ -1,0 +1,16 @@
+[Unit]
+Description=Pastebucket - Minimalist Real-time Collaborative Editor
+After=network.target
+
+[Service]
+# Replace 'youruser' with your actual server username
+User=youruser
+Group=youruser
+WorkingDirectory=/home/youruser/pastebucket
+ExecStart=/home/youruser/pastebucket/.venv/bin/python main.py
+Restart=always
+# Railway style port mapping
+Environment=PORT=3000
+
+[Install]
+WantedBy=multi-user.target
