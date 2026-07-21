@@ -50,27 +50,49 @@ uvicorn main:app --port 3000 --reload
 Once the server is running, open your browser and navigate to:
 [http://127.0.0.1:3000](http://127.0.0.1:3000)
 
-## Deployment (DIY VPS)
+## The "Weirdo Project" Shared Host Workflow (Pull-Based)
 
-For a minimalist, reliable setup on any Linux VPS (DigitalOcean, Hetzner, etc.):
+This setup allows you to host multiple projects on a single VPS without opening SSH (Port 22) to the world. Instead of GitHub "pushing" to your server, your server "pulls" from GitHub using a Webhook or a Cron job.
 
-### 1. Server Setup
-1. Clone the repo to your server: `git clone <your-repo-url> ~/pastebucket`
-2. Create a virtual environment: `python3 -m venv ~/pastebucket/.venv`
-3. Install the systemd service:
-   - Edit `pastebucket.service` and replace `youruser` with your actual username.
-   - Copy it: `sudo cp pastebucket.service /etc/systemd/system/`
-   - Start it: `sudo systemctl enable --now pastebucket`
+### 1. One-Time Server Setup
+Run these once on your server:
+```bash
+# Install core dependencies
+sudo apt update && sudo apt install nginx python3-venv certbot python3-certbot-nginx ufw -y
 
-### 2. GitHub Actions (Auto-Deploy)
-Add these **Secrets** to your GitHub repository (`Settings > Secrets and variables > Actions`):
-- `SERVER_IP`: Your server's IP address.
-- `SERVER_USER`: Your SSH username (e.g., `root` or `ubuntu`).
-- `SSH_PRIVATE_KEY`: Your private SSH key (ensure the public key is in `~/.ssh/authorized_keys` on the server).
+# Setup Firewall (Only Web ports need to be open)
+sudo ufw allow 'Nginx Full' # Ports 80 & 443
+sudo ufw --force enable
 
-> **Note**: Your server user needs permission to run `sudo systemctl restart pastebucket` without a password, or you can remove `sudo` if running as root.
+# Optional: Close SSH to everyone but you
+# sudo ufw allow from YOUR_IP_ADDRESS to any port 22
+```
 
-Now, every time you `git push`, GitHub will automatically update the code on your server and restart the service.
+### 2. Adding a New Project
+
+#### A. DNS & Nginx
+1.  **DNS**: Create a **CNAME** for your subdomain.
+2.  **Nginx**: Use `nginx.conf.template` to create `/etc/nginx/sites-available/pastebucket`.
+3.  **SSL**: Run `sudo certbot --nginx -d pastebucket.nicholaseasler.com`.
+
+#### B. Systemd Service
+1.  Copy `pastebucket.service` to `/etc/systemd/system/`.
+2.  Update paths and set a unique `Environment=PORT=3000`.
+3.  Start it: `sudo systemctl enable --now pastebucket`.
+
+#### C. Auto-Deploy (The "Pull" Method)
+Instead of GitHub Actions, we use a simple Cron job or a Webhook listener on the server to pull changes.
+
+**Option 1: The Simple Cron (Recommended for "Weirdo Projects")**
+Run `crontab -e` and add this line to check for updates every 5 minutes:
+```bash
+*/5 * * * * cd ~/pastebucket && git pull origin main && sudo systemctl restart pastebucket
+```
+
+**Option 2: The Webhook**
+If you want instant deploys, you can use a minimalist webhook listener (like `adnanh/webhook`) that triggers the `deploy.sh` script whenever GitHub sends a POST request.
+
+> **Tip**: When starting a new project, just copy this repo, change the service/directory names in the files, and you're live in minutes.
 
 ## Tech Stack
 

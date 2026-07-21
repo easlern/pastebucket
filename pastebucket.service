@@ -9,7 +9,7 @@ Group=youruser
 WorkingDirectory=/home/youruser/pastebucket
 ExecStart=/home/youruser/pastebucket/.venv/bin/python main.py
 Restart=always
-# Railway style port mapping
+# Change 'pastebucket' to your app name and '3000' to a unique port
 Environment=PORT=3000
 
 [Install]
