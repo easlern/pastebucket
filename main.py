@@ -179,11 +179,7 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
         manager.disconnect(websocket, session_id)
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=3000)
-
-
-if __name__ == "__main__":
     # Railway and other PaaS use the PORT environment variable
     port = int(os.environ.get("PORT", 3000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    # Use string import to support reload feature
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
