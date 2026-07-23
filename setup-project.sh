@@ -53,7 +53,7 @@ echo "📥 Installing dependencies..."
 
 # 3. Create/Update Systemd Service
 echo "⚙️ Configuring systemd service..."
-sudo bash -c "cat <<EOF > $SERVICE_FILE
+cat <<EOF | sudo tee $SERVICE_FILE > /dev/null
 [Unit]
 Description=${PROJECT_NAME} - Shared Host App
 After=network.target
@@ -68,12 +68,12 @@ Environment=PORT=$PORT
 
 [Install]
 WantedBy=multi-user.target
-EOF"
+EOF
 
 # 4. Create/Update Nginx Config
 echo "🌐 Configuring Nginx..."
 NGINX_CONF="/etc/nginx/sites-available/${PROJECT_NAME}"
-sudo bash -c "cat <<EOF > $NGINX_CONF
+cat <<EOF | sudo tee $NGINX_CONF > /dev/null
 server {
     listen 80;
     server_name $FULL_DOMAIN;
@@ -82,14 +82,14 @@ server {
         proxy_pass http://127.0.0.1:$PORT;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
-        proxy_set_header Connection \"upgrade\";
+        proxy_set_header Connection "upgrade";
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;
     }
 }
-EOF"
+EOF
 
 # 5. Enable and Restart
 echo "🔄 Reloading and starting services..."
