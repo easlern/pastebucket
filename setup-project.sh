@@ -1,16 +1,16 @@
 #!/bin/bash
 
-# setup-project.sh <project_name> <subdomain_prefix> [domain] [entry_point]
-# Example: ./setup-project.sh pastebucket . nicholaseasler.com main.py
+# setup-project.sh <project_name> [subdomain_prefix] [domain] [entry_point]
+# Example: ./setup-project.sh pastebucket
 # This script automates the deployment of "weirdo projects" on a shared VPS.
 
-if [ "$#" -lt 2 ]; then
-    echo "Usage: $0 <project_name> <subdomain_prefix> [domain] [entry_point]"
+if [ "$#" -lt 1 ]; then
+    echo "Usage: $0 <project_name> [subdomain_prefix] [domain] [entry_point]"
     exit 1
 fi
 
 PROJECT_NAME=$1
-SUBDOMAIN_PREFIX=$2
+SUBDOMAIN_PREFIX=${2:-"."}
 DOMAIN=${3:-"nicholaseasler.com"}
 ENTRY_POINT=${4:-"main.py"}
 
