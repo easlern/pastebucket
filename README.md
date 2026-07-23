@@ -79,6 +79,9 @@ Follow these steps for every new "weirdo project" (like this one):
     sudo ./setup-project.sh pastebucket .
     ```
 
+    *Note: The script accepts optional arguments for domain and entry point:*
+    `sudo ./setup-project.sh <project_name> <subdomain_prefix> [domain] [entry_point]`
+
 ### How the script works:
 - **Auto-Port**: It automatically finds an available port (starting at 3000) so projects don't clash.
 - **Nginx & SSL**: It generates the Nginx config and runs Certbot for HTTPS.

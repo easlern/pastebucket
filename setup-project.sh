@@ -1,16 +1,18 @@
 #!/bin/bash
 
-# setup-project.sh <project_name> <subdomain_prefix>
-# Example: ./setup-project.sh pastebucket .
+# setup-project.sh <project_name> <subdomain_prefix> [domain] [entry_point]
+# Example: ./setup-project.sh pastebucket . nicholaseasler.com main.py
 # This script automates the deployment of "weirdo projects" on a shared VPS.
 
 if [ "$#" -lt 2 ]; then
-    echo "Usage: $0 <project_name> <subdomain_prefix>"
+    echo "Usage: $0 <project_name> <subdomain_prefix> [domain] [entry_point]"
     exit 1
 fi
 
 PROJECT_NAME=$1
 SUBDOMAIN_PREFIX=$2
+DOMAIN=${3:-"nicholaseasler.com"}
+ENTRY_POINT=${4:-"main.py"}
 
 if [ "$SUBDOMAIN_PREFIX" == "." ]; then
     SUBDOMAIN_PREFIX=$PROJECT_NAME
@@ -19,7 +21,6 @@ fi
 # Use SUDO_USER if available to get the original user account
 USER=${SUDO_USER:-$(whoami)}
 HOME_DIR=$(getent passwd "$USER" | cut -d: -f6)
-DOMAIN="nicholaseasler.com"
 FULL_DOMAIN="${SUBDOMAIN_PREFIX}.${DOMAIN}"
 
 echo "🚀 Setting up project: $PROJECT_NAME for $FULL_DOMAIN"
@@ -62,7 +63,7 @@ After=network.target
 User=$USER
 Group=$USER
 WorkingDirectory=$HOME_DIR/$PROJECT_NAME
-ExecStart=$HOME_DIR/$PROJECT_NAME/.venv/bin/python main.py
+ExecStart=$HOME_DIR/$PROJECT_NAME/.venv/bin/python $ENTRY_POINT
 Restart=always
 Environment=PORT=$PORT
 
