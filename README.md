@@ -68,7 +68,7 @@ sudo ufw --force enable
 ### 2. Adding a New Project
 Follow these steps for every new "weirdo project" (like this one):
 
-1.  **DNS**: Create a **CNAME** for your subdomain (e.g., `pastebucket.nicholaseasler.com`).
+1.  **DNS**: Create an **A Record** pointing your subdomain (e.g., `pastebucket.nicholaseasler.com`) to your server's IP address. (Use a **CNAME** only if you are pointing to another domain name).
 2.  **Clone**: On your server, clone the repository:
     ```bash
     git clone <your-repo-url> ~/pastebucket
